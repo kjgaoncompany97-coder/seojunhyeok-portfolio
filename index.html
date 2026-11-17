@@ -126,7 +126,7 @@ h1,h2,h3,h4,.metric p,.hero-meta span{text-wrap:balance;word-break:keep-all}.abo
 <dialog id="press-dialog" class="press-dialog" aria-label="언론보도 이미지 크게 보기"><div class="press-dialog-top"><strong id="press-dialog-title">기사 보기</strong><button type="button" id="press-close" aria-label="기사 이미지 닫기">닫기 ×</button></div><div class="press-dialog-content"><img id="press-large-image" alt="선택한 언론보도 기사 이미지"></div></dialog>
 <section id="contact" class="section"><a class="contact-film-link" href="#intro-film"><img src="intro-flow-poster.jpg" alt="32초 소개 영상 미리보기"><span><small>영업 × 영업관리 × AI 활용</small><strong>직접 팔고,<br>팀의 실적을 이끕니다.</strong><em>32초 소개 영상 보기 ▶</em></span></a><div class="contact-box reveal"><div><h3>직접 영업하고, 팀의 실적을 이끌며,<br>AI로 업무 도구까지 만듭니다.</h3><p>서준혁 · 광주광역시<br><a href="mailto:kjgaoncompany@naver.com">kjgaoncompany@naver.com</a><br><a href="tel:01021710695">010-2171-0695</a></p></div><div class="actions"><a class="btn" href="#intro-film">소개 영상 보기 ▶</a><a class="btn primary" href="mailto:kjgaoncompany@naver.com">이메일 보내기 ↗</a><button class="btn" id="copy-email">이메일 복사</button><a class="btn" href="tel:01021710695">전화하기</a></div></div></section>
 <footer><span>© 2026 서준혁 · 경력과 업무 프로젝트</span><span>2026.11 기준 · 경력과 제작 사례</span></footer></div></main>
-<dialog id="project-dialog" aria-labelledby="modal-title"><div class="modal-top"><span>프로젝트 상세</span><button id="close-modal" aria-label="프로젝트 상세 닫기">닫기 ×</button></div><div class="modal-body" id="modal-content"></div></dialog><div class="toast" id="toast" role="status" hidden></div>
+<dialog id="project-dialog" aria-labelledby="modal-title"><div class="modal-top"><span>프로젝트 상세 · 이미지 확대</span><button id="close-modal" aria-label="프로젝트 상세 닫기">닫기 ×</button></div><div class="modal-body" id="modal-content"></div></dialog><div class="toast" id="toast" role="status" hidden></div>
 <script>
 // A user gesture starts the film with sound. No autoplay or forced audio.
 (()=>{const v=document.getElementById('portfolio-film'),b=document.getElementById('film-start');if(!v||!b)return;v.volume=.7;b.addEventListener('click',async()=>{try{v.muted=false;await v.play();b.hidden=true;}catch{b.hidden=true;v.focus();}});v.addEventListener('play',()=>b.hidden=true);v.addEventListener('ended',()=>{b.hidden=false;b.querySelector('span').lastChild.textContent='소개 영상 다시 보기';});document.addEventListener('visibilitychange',()=>{if(document.hidden&&!v.paused)v.pause();});})();
@@ -140,6 +140,8 @@ document.querySelectorAll('.theme').forEach(b=>b.onclick=()=>document.body.class
 document.querySelectorAll('[data-filter]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-filter]').forEach(x=>x.setAttribute('aria-pressed',x===b));document.querySelectorAll('[data-project]').forEach(x=>{x.hidden=b.dataset.filter!=='전체'&&b.dataset.filter!==x.dataset.category;x.classList.add('visible')})});
 const dialog=document.getElementById('project-dialog'),content=document.getElementById('modal-content');let lastTrigger;const escape=s=>s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 document.querySelectorAll('[data-project]').forEach(b=>b.onclick=()=>{
+const pressModal=document.getElementById('press-dialog');if(pressModal?.open)pressModal.close();
+if(dialog.open)dialog.close();
 lastTrigger=b;const p=projects[+b.dataset.project];
 content.innerHTML='<span class="eyebrow">'+escape(p.cat)+'</span><h2 id="modal-title">'+escape(p.title)+'</h2><p>'+escape(p.desc)+'</p><div class="chips">'+p.tags.map(t=>'<span>'+escape(t)+'</span>').join('')+'</div><div class="case-grid">'+[['업무 목적',p.problem],['기획·구축 내용',p.work],['업무 개선',p.effect]].map(x=>'<div><h4>'+x[0]+'</h4><p>'+escape(x[1])+'</p></div>').join('')+'</div><div class="project-gallery">'+p.images.map((src,i)=>'<figure class="project-figure"><div class="figure-tools"><button class="image-zoom">원본 크기로 확대</button></div><div class="image-stage"><img class="gallery-image" src="'+src+'" alt="'+escape(p.title)+' 제작 화면 '+(i+1)+'" loading="lazy"></div></figure>').join('')+'</div>';
 content.querySelectorAll('.image-zoom').forEach(z=>z.onclick=()=>{const stage=z.closest('figure').querySelector('.image-stage');stage.classList.toggle('zoomed');z.textContent=stage.classList.contains('zoomed')?'전체 화면 맞추기':'원본 크기로 확대';});
@@ -170,6 +172,8 @@ const pressItems=[
 const pressDialog=document.getElementById('press-dialog');
 document.querySelectorAll('.press-preview img').forEach(im=>im.addEventListener('error',()=>im.classList.add('is-missing')));
 document.querySelectorAll('[data-press]').forEach(card=>card.addEventListener('click',()=>{
+const projectModal=document.getElementById('project-dialog');if(projectModal?.open)projectModal.close();
+if(pressDialog.open)pressDialog.close();
 const item=pressItems[Number(card.dataset.press)];if(!item)return;
 
 document.getElementById('press-dialog-title').textContent=item.title;
